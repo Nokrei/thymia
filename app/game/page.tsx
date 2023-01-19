@@ -6,21 +6,15 @@ import AppContext from "@/context/AppContext";
 export default function Game() {
   const router = useRouter();
   const { user, successCount, setSuccessCount } = useContext(AppContext);
+  const [gameArr, setGameArr] = useState([]);
 
   const alphabetArr = [...Array(26)].map((_, i) => {
     return String.fromCharCode(i + 97);
   });
-
-  const [currentLetter, setCurrentLetter] = useState("");
-  // const sessionArr = alphabetArr.sort(() => Math.random() - 0.5).slice(0, 10);
-  const sessionArr = alphabetArr.slice(0, 10);
-  const [referenceArr, setReferenceArr] = useState([]);
-  const setLetter = () => {
-    let min = Math.ceil(0);
-    let max = Math.floor(9);
-    const foo = sessionArr[Math.floor(Math.random() * (max - min + 1) + min)];
-    setCurrentLetter(foo);
-    referenceArr.push(foo);
+  const max = 10
+ 
+  const setLetter = () => {   
+    setGameArr(current => [...current, alphabetArr.slice(0,max)[Math.floor(Math.random()*max)]])
   };
 
   const handleGameStart = () => {
@@ -28,20 +22,22 @@ export default function Game() {
   };
 
   const handleLetterClick = () => {
-    if (currentLetter === referenceArr[referenceArr.length - 3]) {
+    if (gameArr[gameArr.length-1] === gameArr[gameArr.length - 3]) {
       console.log("Success!");
       setSuccessCount(successCount + 1);
     } else {
       console.log("fail");
     }
-    console.log(referenceArr);
+    console.log(gameArr);
   };
 
   useEffect(() => {
-    if (referenceArr.length >= 12) {
+    if (gameArr.length >= 12) {
       router.push("/score");
     }
-  }, [referenceArr, router]);
+    console.log(gameArr);
+    
+  }, [gameArr.length, router]);
 
   return (
     <main className="text-center text-white">
@@ -51,14 +47,6 @@ export default function Game() {
         to decide whether the current letter being displayed already appeared
         two letters ago.
       </p>
-      <div>
-        The letters used in this session are: <br />
-        {sessionArr.map((letter) => (
-          <span className="px-2" key={letter}>
-            {letter}
-          </span>
-        ))}
-      </div>
       <p className="py-5 text-xl">
         Press
         <button
@@ -69,7 +57,7 @@ export default function Game() {
         </button>
         when ready
       </p>
-      <div onClick={handleLetterClick}>{currentLetter}</div>
+      <button className=" bg-slate-500 py-1 px-2 text-3xl" onClick={handleLetterClick}>{gameArr[gameArr.length - 1]}</button>
     </main>
   );
 }
