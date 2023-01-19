@@ -42,9 +42,9 @@ export default function Game() {
     <main className="text-center text-white">
       <h1 className=" text-3xl font-bold py-5">Welcome {user}</h1>
       <p>
-        You will be presented with multiple sets of random letters, your goal is
-        to decide whether the current letter being displayed already appeared
-        two letters ago.
+        You will be presented with a set of random letters, your goal is to
+        decide whether the current letter being displayed already appeared two
+        letters ago.
       </p>
       <p className="py-5 text-xl">
         Press
