@@ -11,33 +11,32 @@ export default function Game() {
   const alphabetArr = [...Array(26)].map((_, i) => {
     return String.fromCharCode(i + 97);
   });
-  const max = 10
- 
-  const setLetter = () => {   
-    setGameArr(current => [...current, alphabetArr.slice(0,max)[Math.floor(Math.random()*max)]])
+  const max = 10;
+
+  const setLetter = () => {
+    setGameArr((current) => [
+      ...current,
+      alphabetArr.slice(0, max)[Math.floor(Math.random() * max)],
+    ]);
   };
 
+  let startGame: any;
   const handleGameStart = () => {
-    setInterval(setLetter, 3000);
+    startGame = setInterval(setLetter, 500);
   };
 
   const handleLetterClick = () => {
-    if (gameArr[gameArr.length-1] === gameArr[gameArr.length - 3]) {
-      console.log("Success!");
+    if (gameArr[gameArr.length - 1] === gameArr[gameArr.length - 3]) {
       setSuccessCount(successCount + 1);
-    } else {
-      console.log("fail");
     }
-    console.log(gameArr);
   };
 
   useEffect(() => {
     if (gameArr.length >= 12) {
+      clearInterval(startGame);
       router.push("/score");
     }
-    console.log(gameArr);
-    
-  }, [gameArr.length, router]);
+  }, [gameArr.length, router, startGame]);
 
   return (
     <main className="text-center text-white">
@@ -57,7 +56,12 @@ export default function Game() {
         </button>
         when ready
       </p>
-      <button className=" bg-slate-500 py-1 px-2 text-3xl" onClick={handleLetterClick}>{gameArr[gameArr.length - 1]}</button>
+      <button
+        className=" bg-slate-500 py-1 px-2 text-3xl"
+        onClick={handleLetterClick}
+      >
+        {gameArr[gameArr.length - 1]}
+      </button>
     </main>
   );
 }
