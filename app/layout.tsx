@@ -1,3 +1,5 @@
+"use client";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import { GlobalProvider } from "@/context/AppContext";
 import "./globals.css";
@@ -7,6 +9,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const queryClient = new QueryClient();
   return (
     <html lang="en">
       {/*
@@ -16,10 +19,12 @@ export default function RootLayout({
       <head />
 
       <body className=" bg-slate-900">
-        <GlobalProvider>
-          <Header />
-          <div className=" max-w-lg m-auto">{children}</div>
-        </GlobalProvider>
+        <QueryClientProvider client={queryClient}>
+          <GlobalProvider>
+            <Header />
+            <div className=" max-w-lg m-auto">{children}</div>
+          </GlobalProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

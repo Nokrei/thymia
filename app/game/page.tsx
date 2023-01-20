@@ -1,42 +1,66 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import AppContext from "@/context/AppContext";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Game() {
   const router = useRouter();
   const { user, successCount, setSuccessCount } = useContext(AppContext);
-  const [gameArr, setGameArr] = useState([]);
+  const [shuffledLettersFromServer, setShuffledLettersFromServer] = useState<
+    string[]
+  >([]);
+  const [shuffledLettersWithDuplicates, setShuffledLettersWithDuplicates] =
+    useState<string[]>([]);
+  const [sequenceLength, setSequenceLength] = useState(0);
+  const startGameIntervalRef = useRef<null | NodeJS.Timeout>(null);
 
-  const alphabetArr = [...Array(26)].map((_, i) => {
-    return String.fromCharCode(i + 97);
-  });
-  const max = 10;
-
-  const setLetter = () => {
-    setGameArr((current) => [
-      ...current,
-      alphabetArr.slice(0, max)[Math.floor(Math.random() * max)],
-    ]);
-  };
-
-  let startGame: any;
   const handleGameStart = () => {
-    startGame = setInterval(setLetter, 500);
+    startGameIntervalRef.current = setInterval(
+      () =>
+        setShuffledLettersWithDuplicates((current) => [
+          ...current,
+          shuffledLettersFromServer[Math.floor(Math.random() * sequenceLength)],
+        ]),
+      500
+    );
   };
 
   const handleLetterClick = () => {
-    if (gameArr[gameArr.length - 1] === gameArr[gameArr.length - 3]) {
+    if (
+      shuffledLettersWithDuplicates[
+        shuffledLettersWithDuplicates.length - 1
+      ] ===
+      shuffledLettersWithDuplicates[shuffledLettersWithDuplicates.length - 3]
+    ) {
       setSuccessCount(successCount + 1);
     }
   };
 
+  useQuery({
+    queryFn: async () => {
+      try {
+        const res = await axios.get("/api/lettersForGame");
+        setShuffledLettersFromServer(res.data.shuffledAlphabetSliced);
+        setSequenceLength(res.data.sequenceLength);
+      } catch (e: any) {
+        console.log(e);
+      }
+    },
+  });
+
   useEffect(() => {
-    if (gameArr.length >= 12) {
-      clearInterval(startGame);
+    if (shuffledLettersWithDuplicates.length >= 16) {
+      clearInterval(startGameIntervalRef.current as NodeJS.Timeout);
       router.push("/score");
     }
-  }, [gameArr.length, router, startGame]);
+  }, [shuffledLettersWithDuplicates.length, router, startGameIntervalRef]);
+
+  if (!user) {
+    router.push("/");
+    return;
+  }
 
   return (
     <main className="text-center text-white">
@@ -46,6 +70,14 @@ export default function Game() {
         decide whether the current letter being displayed already appeared two
         letters ago.
       </p>
+      <p className="text-white">The letters used in this session are:</p>
+      {shuffledLettersFromServer.map((letter) => {
+        return (
+          <span key={letter} className="text-white px-1">
+            {letter}
+          </span>
+        );
+      })}
       <p className="py-5 text-xl">
         Press
         <button
@@ -56,12 +88,18 @@ export default function Game() {
         </button>
         when ready
       </p>
-      <button
-        className=" bg-slate-500 py-1 px-2 text-3xl"
-        onClick={handleLetterClick}
-      >
-        {gameArr[gameArr.length - 1]}
-      </button>
+      <div>
+        <button
+          className=" bg-slate-500 py-1 px-2 text-3xl"
+          onClick={handleLetterClick}
+        >
+          {
+            shuffledLettersWithDuplicates[
+              shuffledLettersWithDuplicates.length - 1
+            ]
+          }
+        </button>
+      </div>
     </main>
   );
 }
