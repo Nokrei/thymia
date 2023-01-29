@@ -2,8 +2,8 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import AppContext from "@/context/AppContext";
 import { useQuery } from "@tanstack/react-query";
+import AppContext from "@/context/AppContext";
 
 export default function Game() {
   const router = useRouter();
@@ -19,8 +19,8 @@ export default function Game() {
   const handleGameStart = () => {
     startGameIntervalRef.current = setInterval(
       () =>
-        setShuffledLettersWithDuplicates((current) => [
-          ...current,
+        setShuffledLettersWithDuplicates((currentLetters) => [
+          ...currentLetters,
           shuffledLettersFromServer[Math.floor(Math.random() * sequenceLength)],
         ]),
       500
@@ -51,11 +51,16 @@ export default function Game() {
   });
 
   useEffect(() => {
-    if (shuffledLettersWithDuplicates.length >= 16) {
+    if (shuffledLettersWithDuplicates.length >= sequenceLength + 4) {
       clearInterval(startGameIntervalRef.current as NodeJS.Timeout);
       router.push("/score");
     }
-  }, [shuffledLettersWithDuplicates.length, router, startGameIntervalRef]);
+  }, [
+    shuffledLettersWithDuplicates.length,
+    router,
+    startGameIntervalRef,
+    sequenceLength,
+  ]);
 
   if (!user) {
     router.push("/");

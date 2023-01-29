@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import AppContext from "@/context/AppContext";
 
 export default function Home() {
-  const { user, setUser } = useContext(AppContext);
+  const { setUser } = useContext(AppContext);
   const router = useRouter();
   const {
     register,
