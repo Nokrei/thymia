@@ -26,7 +26,9 @@ export default function Home() {
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className=" text-center">
         <input {...register("name", { required: true })} className="p-1" />
-        <input type="submit" className=" bg-slate-500 p-1" />
+        <button type="submit" className=" bg-slate-500 p-1">
+          Submit
+        </button>
         {errors.name && (
           <p className=" text-red-500 pt-2">
             You need to input your name in order to continue
