@@ -2,7 +2,9 @@ import { useEffect, useRef } from "react";
 
 import { useIsomorphicLayoutEffect } from "usehooks-ts";
 
-function useInterval(callback: () => void, delay: number | null) {
+// use named exports default // look for eslint rule
+// delete if not used
+export function useInterval(callback: () => void, delay: number | null) {
   const savedCallback = useRef(callback);
 
   // Remember the latest callback if it changes.
@@ -23,5 +25,3 @@ function useInterval(callback: () => void, delay: number | null) {
     return () => clearInterval(id);
   }, [delay]);
 }
-
-export default useInterval;

@@ -12,20 +12,20 @@ export default function RootLayout({
   const queryClient = new QueryClient();
   return (
     <html lang="en">
-      {/*
+      <QueryClientProvider client={queryClient}>
+        <UserAndGameProvider>
+          {/*
         <head /> will contain the components returned by the nearest parent
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
-      <head />
+          <head />
 
-      <body className=" bg-slate-900">
-        <QueryClientProvider client={queryClient}>
-          <GlobalProvider>
+          <body className=" bg-slate-900">
             <Header />
             <div className=" max-w-lg m-auto">{children}</div>
-          </GlobalProvider>
-        </QueryClientProvider>
-      </body>
+          </body>
+        </UserAndGameProvider>
+      </QueryClientProvider>
     </html>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
@@ -11,20 +11,16 @@ export default function Game() {
   const { user, successCount, setSuccessCount } = useContext(AppContext);
   const [displayedLetter, setDisplayedLetter] = useState("");
   const [count, setCount] = useState(0);
-  const [delay, setDelay] = useState<number>(1500);
-  const [isPlaying, setPlaying] = useState<boolean>(false);
+  const [delay, setDelay] = useState(1500); // if not being used, then const
+  const [isPlaying, setPlaying] = useState(false);
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["lettersFromServer"],
-    queryFn: async () => {
-      try {
-        const res = await axios.get("/api/lettersForGame");
-        return res.data.sequence;
-      } catch (e: any) {
-        console.log(e);
-      }
-    },
-  });
+  // const { isLoading, data, error } = useQuery(["lettersFromServer"], () =>
+  //   axios.get("/api/lettersForGame")
+  // );
+
+  const { isLoading, error, data } = useQuery(["check works"], () =>
+    fetch("/api/lettersForGame").then((res) => res.json())
+  );
 
   useInterval(
     () => {
@@ -52,6 +48,7 @@ export default function Game() {
   }
 
   if (isLoading) return "Loading...";
+  if (error) return "Oh shit!";
 
   return (
     <main className="text-center text-white">
