@@ -1,20 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 const lettersForGame = (req: NextApiRequest, res: NextApiResponse) => {
-  const sequence = "arertuiupleuei";
-  const alphabet = [...Array(26)].map((_, i) => {
-    return String.fromCharCode(i + 97).toUpperCase();
-  });
-  const shuffledAlphabetSliced = [
-    ...alphabet
-      .sort(() => {
-        return Math.random() - 0.5;
-      })
-      .slice(0, 12),
-  ];
   if (req.method === "GET") {
     res.status(200).json({
-      sequence,
+      sequence: "arertuiupleuei",
     });
   } else {
     res.setHeader("Allow", ["GET"]);

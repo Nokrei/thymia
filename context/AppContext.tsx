@@ -1,24 +1,45 @@
 "use client";
-import { createContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  Dispatch,
+  SetStateAction,
+  ReactElement,
+} from "react";
 
-type contextType = {
+// TODO: get rid of anys
+type ContextType = {
   user: string;
-  setUser: any;
+  setUser: Dispatch<SetStateAction<string>>;
   successCount: number;
-  setSuccessCount: any;
+  setSuccessCount: Dispatch<SetStateAction<number>>;
 };
 
-const obj: contextType = {
+const AppContext = createContext<ContextType>({
   user: "",
-  setUser: {},
+  setUser: () => null,
   successCount: 0,
-  setSuccessCount: {},
+  setSuccessCount: () => null,
+});
+
+type Props = {
+  children: ReactElement;
 };
 
-const AppContext = createContext(obj);
+// isChecking === true, user === false
+// isChecking === true, user === true
+// isChecking === false, user === true
+// isChecking === false, user === false
 
-export const GlobalProvider = ({ children }: { children: any }) => {
+// if (isChecking) return <p>Loading...</p>;
+
+// if (!isChecking && !user) Router.push("/");
+
+// return <p>Welcome {user}</p>;
+
+export const GlobalProvider = ({ children }: Props) => {
   const [user, setUser] = useState("");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [successCount, setSuccessCount] = useState(0);
 
   return (
